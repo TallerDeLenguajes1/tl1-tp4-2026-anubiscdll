@@ -14,10 +14,18 @@ typedef struct Nodo{
     struct Nodo *Siguiente;
 } Nodo;
 
-void crearTarea();
-void crearNodo();
-void moverNodo();
-void verLista();
+typedef struct Lista {
+    Nodo* siguiente;
+    int cantidad;
+}Lista;
+Lista crearLista();
+Tarea crearTarea(int* ID);
+Lista crearNodo(Lista L,Tarea T);
+Lista moverNodo(Lista pendientes, Lista terminadas, int ID);
+void verLista(Lista L);
+void busquedaID(Lista L, int ID);
+void busquedaPalabra(Lista L, char* palabra);
+
 // pasos
 // crear listas a realizar y terminadas
 // Ingresar tareas en a realizar
@@ -30,41 +38,83 @@ void verLista();
 int main() {
     int tareaIDcont = 0;
     int menu = 1; // "booleano" para mantener el menu corriendo esperando la acción
-    char* buffer = (char*) malloc(100*sizeof(char));
     int opcion;
+    int menuTareas = 1;
+    char* palabra = (char*)malloc(100*sizeof(char));
+    // Creo la lista pendientes
+    Lista pendientes = crearLista();
+    Lista terminadas = crearLista();
+    Tarea T;
     while (menu){
         puts("Que desea hacer:");
         puts("1. Cargar tareas pendientes ");
         puts("2. Ver tareas pendientes ");
         puts("3. Ver tareas terminadas ");
-        puts("4. Buscar tarea por ID ");
-        puts("5. Buscar tarea por palabra clave ");
-        puts("6. Salir ");
+        puts("4. Marcar tareas como terminadas");
+        puts("5. Buscar tarea por ID ");
+        puts("6. Buscar tarea por palabra clave ");
+        puts("7. Salir ");
         scanf(" %d",&opcion);
         getchar();
         while (opcion < 1 || opcion > 6){
             puts("Opcion elegida no valida, ingrese un valor del 1 al 6");
             scanf(" %d",&opcion);
             getchar();
+
         }
         switch(opcion){
-            case 1:
-                
+            case 1: // cargar tareas
+                T = crearTarea(&tareaIDcont);
+                pendientes = crearNodo(pendientes,T);
+                puts("Tarea ingresada!!");
+                menuTareas = 1;
+                while(menuTareas){
+                    puts("Que desea hacer?");
+                    puts("1. Ingresar otra tarea");
+                    puts("2. Volver al anterior menu");
+                    scanf(" %d", &opcion);
+                    getchar();
+                    while (opcion < 1 || opcion > 2){
+                        puts("Opcion elegida no valida, ingrese un valor del 1 al 2");
+                        scanf(" %d",&opcion);
+                        getchar();
+                    }
+                    switch (opcion)
+                    {
+                    case 1:
+                        T = crearTarea(&tareaIDcont);
+                        pendientes = crearNodo(pendientes,T);
+                        break;
+                    case 2:
+                        menuTareas = 0; 
+                    break;
+                    default:
+                        break;
+                    }
+
+                }
             break;
             
-            case 2: 
+            case 2: // Ver pendientes
+                void verLista(pendientes);
             break;
             
-            case 3: 
+            case 3: // Ver terminadas
+                void verLista(terminadas);
             break;
             
-            case 4: 
+            case 4: // Elegir tarea realizada
             break;
             
-            case 5: 
+            case 5: // busqueda por ID
             break;
             
-            case 6: 
+            case 6: // busqueda por palabra
+
+            break;
+
+            case 7:
+            menu = 0;
             break;
             
             default: 
@@ -73,5 +123,50 @@ int main() {
         }
 
     }
+    free(palabra);
     return 0;
+}
+
+Lista crearLista(){
+    Lista L;
+    L.siguiente=NULL;
+    L.cantidad=0;
+    return L;
+}
+
+Tarea crearTarea(int* ID){
+    Tarea T;
+    int duracion;
+    char* buffer = (char*) malloc(200*sizeof(char));
+    T.TareaID = *(ID) ++ ;
+    *(ID) ++;
+    puts("Ingrese una descripción de la tarea");
+    gets(buffer);
+    strcpy(T.Descripcion,buffer); 
+    puts("Ingrese una duración de la tarea (del 10 al 100):");
+    scanf(" %d",&duracion);
+    T.Duracion = duracion;
+    free(buffer);
+    return T;
+}
+
+Lista crearNodo(Lista L,Tarea T){
+    Nodo* nodo = (Nodo*) malloc(sizeof(Nodo));
+    nodo->Siguiente = L.siguiente;
+    nodo->T = T;
+    L.cantidad++;
+    return L;
+}
+
+void verLista(Lista L){
+    if (L.cantidad == 0){
+        puts("Lista vacia");
+    }else {
+        while (L.siguiente != NULL){
+            puts("Tareas: ");
+            printf("ID: %d\n",L.siguiente->T.TareaID);
+            printf("Descripcion: \n%s \n",L.siguiente->T.Descripcion);
+            printf("Duracion: %d \n",L.siguiente->T.Duracion);
+        }
+    }
 }
