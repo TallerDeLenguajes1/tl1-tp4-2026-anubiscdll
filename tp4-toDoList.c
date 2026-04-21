@@ -109,6 +109,7 @@ int main() {
                 void verLista(pendientes);
                 puts("Elija el ID de la tarea a marcar como realizada");
                 scanf(" %d", &elegido);
+                getchar();
                 terminadas = moverNodo(pendientes,terminadas,elegido);
             break;
             
@@ -129,6 +130,7 @@ int main() {
         }
 
     }
+    // falta liberar la lista 
     free(palabra);
     return 0;
 }
@@ -165,9 +167,20 @@ Lista crearNodo(Lista L,Tarea T){
 }
 
 Lista borrarEspecifico(Lista L, int ID){
-    // trabajo con un nodo anterior, uno actual y el siguiente
-    
-    
+    if (L.siguiente->T.TareaID == ID){ // si esto pasa entonces la tarea buscada es la ultima
+        Nodo* nodo= L.siguiente;
+        L.siguiente = nodo->Siguiente;
+        free(nodo);
+        L.cantidad--;
+    } else {
+        while (L.siguiente != NULL){
+            if (L.siguiente->Siguiente->T.TareaID == ID){// Significa que si L.siguiente es el actual, si el nodo que le sigue contiene la tarea de ID buscada...
+                L.siguiente = L.siguiente->Siguiente->Siguiente;
+                free(L.siguiente->Siguiente);
+                L.cantidad--;
+            }
+        }
+    }
     return L;
 }
 
@@ -185,7 +198,7 @@ void verLista(Lista L){
 }
 
 Lista moverNodo(Lista pendientes, Lista terminadas, int ID){
-    while (pendientes.siguiente->T.TareaID != ID){
+    while (pendientes.siguiente->T.TareaID != ID || pendientes.siguiente != NULL){
         terminadas = crearNodo(terminadas,pendientes.siguiente->T);
         pendientes = borrarEspecifico(pendientes, ID);
         return terminadas;
