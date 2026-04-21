@@ -25,6 +25,7 @@ Lista moverNodo(Lista pendientes, Lista terminadas, int ID);
 void verLista(Lista L);
 void busquedaID(Lista L, int ID);
 void busquedaPalabra(Lista L, char* palabra);
+Lista borrarEspecifico(Lista L, int ID);
 
 // pasos
 // crear listas a realizar y terminadas
@@ -45,6 +46,7 @@ int main() {
     Lista pendientes = crearLista();
     Lista terminadas = crearLista();
     Tarea T;
+    int elegido;
     while (menu){
         puts("Que desea hacer:");
         puts("1. Cargar tareas pendientes ");
@@ -104,6 +106,10 @@ int main() {
             break;
             
             case 4: // Elegir tarea realizada
+                void verLista(pendientes);
+                puts("Elija el ID de la tarea a marcar como realizada");
+                scanf(" %d", &elegido);
+                terminadas = moverNodo(pendientes,terminadas,elegido);
             break;
             
             case 5: // busqueda por ID
@@ -158,6 +164,13 @@ Lista crearNodo(Lista L,Tarea T){
     return L;
 }
 
+Lista borrarEspecifico(Lista L, int ID){
+    // trabajo con un nodo anterior, uno actual y el siguiente
+    
+    
+    return L;
+}
+
 void verLista(Lista L){
     if (L.cantidad == 0){
         puts("Lista vacia");
@@ -169,4 +182,14 @@ void verLista(Lista L){
             printf("Duracion: %d \n",L.siguiente->T.Duracion);
         }
     }
+}
+
+Lista moverNodo(Lista pendientes, Lista terminadas, int ID){
+    while (pendientes.siguiente->T.TareaID != ID){
+        terminadas = crearNodo(terminadas,pendientes.siguiente->T);
+        pendientes = borrarEspecifico(pendientes, ID);
+        return terminadas;
+    }
+    puts("ID no encontrado");
+    return terminadas;
 }
